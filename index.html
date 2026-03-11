@@ -945,7 +945,7 @@ TIP: [One email writing tip in Spanish for professional context]`
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById('screen-' + id).classList.add('active');
-    if (id === 'app') initChat();
+    if (id === 'app') setTimeout(() => initChat(), 50);
   }
 
   function selectOption(el, type, value) {
@@ -974,9 +974,11 @@ TIP: [One email writing tip in Spanish for professional context]`
 
   function initChat() {
     const chatArea = document.getElementById('chat-area');
+    if (!chatArea) return;
     conversationHistory = [];
     chatArea.innerHTML = '';
-    updateScenarioBanner();
+    const banner = document.getElementById('scenario-banner');
+    if (banner) updateScenarioBanner();
     addAIMessage(getOpeningMessage());
     updateCreditsDisplay();
   }
