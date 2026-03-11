@@ -1123,6 +1123,13 @@ TIP: [One email writing tip in Spanish for professional context]`
       const data = await response.json();
       hideTyping();
 
+      if (data.error) {
+        hideTyping();
+        addAIMessage("Sorry, there was an error: " + (data.error.message || data.error));
+        isWaiting = false;
+        document.getElementById('send-btn').disabled = false;
+        return;
+      }
       const fullText = data.content.map(c => c.text || '').join('');
       const parts = fullText.split('---FEEDBACK---');
       const mainText = parts[0].replace(/^(MIKE|SARAH|TOM|COACH):\s*/i, '').trim();
