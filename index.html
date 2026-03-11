@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FluentAI — Inglés para profesionales</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a3a;
+    --accent: #4fffb0;
+    --accent2: #7b6fff;
+    --text: #f0f0f8;
+    --muted: #6a6a8a;
+    --danger: #ff4f6f;
+    --user-bubble: #1e1e30;
+    --ai-bubble: #0f2820;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* SCREENS */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; }
+
+  /* ========== LANDING ========== */
+  #screen-landing {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bg-grid {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79,255,176,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,255,176,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  .bg-glow {
+    position: fixed;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    opacity: 0.15;
+  }
+  .glow-1 { background: var(--accent); top: -200px; left: -100px; }
+  .glow-2 { background: var(--accent2); bottom: -200px; right: -100px; }
+
+  .landing-content {
+    max-width: 680px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.8s ease both;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(79,255,176,0.1);
+    border: 1px solid rgba(79,255,176,0.3);
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 2rem;
+  }
+
+  .badge-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+  }
+
+  h1 .highlight {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: 1.15rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 3rem;
+    font-weight: 300;
+  }
+
+  .subtitle strong { color: var(--text); font-weight: 500; }
+
+  .cta-group {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 0.9rem 2.2rem;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.01em;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(79,255,176,0.35);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    padding: 0.9rem 2rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .social-proof {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .avatars {
+    display: flex;
+  }
+
+  .avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    margin-left: -8px;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+  }
+
+  .avatar:first-child { margin-left: 0; }
+
+  .features-strip {
+    display: flex;
+    gap: 2rem;
+    margin-top: 4rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .feature-icon {
+    width: 28px; height: 28px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+  }
+
+  /* ========== ONBOARDING ========== */
+  #screen-onboarding {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .onboarding-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 3rem;
+    max-width: 540px;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .step-indicator {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 2rem;
+  }
+
+  .step-dot {
+    height: 4px;
+    border-radius: 2px;
+    flex: 1;
+    background: var(--border);
+    transition: background 0.3s;
+  }
+
+  .step-dot.active { background: var(--accent); }
+  .step-dot.done { background: rgba(79,255,176,0.4); }
+
+  .step { display: none; }
+  .step.active { display: block; }
+
+  .step-label {
+    font-size: 0.75rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    line-height: 1.2;
+  }
+
+  .step-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+  }
+
+  .option-card {
+    background: var(--surface2);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    padding: 1.2rem 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+  }
+
+  .option-card:hover { border-color: var(--accent2); }
+  .option-card.selected { border-color: var(--accent); background: rgba(79,255,176,0.07); }
+
+  .option-emoji { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; }
+  .option-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .option-desc { font-size: 0.75rem; color: var(--muted); }
+
+  .btn-next {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-next:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-next:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* ========== APP ========== */
+  #screen-app {
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+
+  .app-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--accent);
+  }
+
+  .scenario-select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .credits-badge {
+    background: rgba(79,255,176,0.1);
+    border: 1px solid rgba(79,255,176,0.3);
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.3rem 0.8rem;
+    border-radius: 100px;
+  }
+
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    scroll-behavior: smooth;
+  }
+
+  .chat-area::-webkit-scrollbar { width: 4px; }
+  .chat-area::-webkit-scrollbar-track { background: transparent; }
+  .chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .scenario-banner {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent2);
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .scenario-banner strong { color: var(--text); display: block; margin-bottom: 0.2rem; font-size: 0.9rem; }
+
+  .message {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 85%;
+    animation: fadeUp 0.3s ease both;
+  }
+
+  .message.user { align-self: flex-end; flex-direction: row-reverse; }
+  .message.ai { align-self: flex-start; }
+
+  .msg-avatar {
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+    align-self: flex-end;
+  }
+
+  .msg-avatar.ai-av { background: rgba(79,255,176,0.15); }
+  .msg-avatar.user-av { background: rgba(123,111,255,0.2); }
+
+  .msg-content { display: flex; flex-direction: column; gap: 0.4rem; }
+
+  .msg-bubble {
+    padding: 0.85rem 1.1rem;
+    border-radius: 16px;
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .message.ai .msg-bubble {
+    background: var(--ai-bubble);
+    border: 1px solid rgba(79,255,176,0.15);
+    border-bottom-left-radius: 4px;
+  }
+
+  .message.user .msg-bubble {
+    background: var(--user-bubble);
+    border: 1px solid var(--border);
+    border-bottom-right-radius: 4px;
+    color: var(--text);
+  }
+
+  .msg-feedback {
+    background: rgba(255,79,111,0.08);
+    border: 1px solid rgba(255,79,111,0.2);
+    border-radius: 10px;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.8rem;
+    color: #ff8fa3;
+    line-height: 1.5;
+  }
+
+  .msg-feedback .feedback-label {
+    font-weight: 600;
+    color: var(--danger);
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .msg-tip {
+    background: rgba(79,255,176,0.06);
+    border: 1px solid rgba(79,255,176,0.15);
+    border-radius: 10px;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.8rem;
+    color: #a0ffd8;
+    line-height: 1.5;
+  }
+
+  .msg-tip .tip-label {
+    font-weight: 600;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 0.2rem;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .typing-indicator {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 0.85rem 1.1rem;
+    background: var(--ai-bubble);
+    border: 1px solid rgba(79,255,176,0.15);
+    border-radius: 16px;
+    border-bottom-left-radius: 4px;
+    width: fit-content;
+  }
+
+  .typing-dot {
+    width: 7px; height: 7px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: typingBounce 1.2s infinite;
+    opacity: 0.5;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  /* INPUT */
+  .input-area {
+    padding: 1rem 1.5rem 1.5rem;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    flex-shrink: 0;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-end;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 0.75rem 1rem;
+    transition: border-color 0.2s;
+  }
+
+  .input-row:focus-within { border-color: var(--accent2); }
+
+  #msg-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    resize: none;
+    max-height: 120px;
+    line-height: 1.5;
+  }
+
+  #msg-input::placeholder { color: var(--muted); }
+
+  .input-hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 0.6rem;
+    font-style: italic;
+  }
+
+  .send-btn {
+    background: var(--accent);
+    border: none;
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+    color: #000;
+  }
+
+  .send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 16px rgba(79,255,176,0.3); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* PAYWALL */
+  .paywall-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,10,15,0.92);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .paywall-overlay.show { display: flex; }
+
+  .paywall-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 2.5rem;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  .paywall-icon {
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  .paywall-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+
+  .paywall-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .price-block {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .price-amount {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .price-period { color: var(--muted); font-size: 0.85rem; margin-top: 0.3rem; }
+
+  .price-features {
+    list-style: none;
+    text-align: left;
+    margin-top: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .price-features li {
+    font-size: 0.85rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .price-features li::before {
+    content: '✓';
+    color: var(--accent);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .btn-subscribe {
+    width: 100%;
+    background: var(--accent);
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    padding: 1rem;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 1rem;
+  }
+
+  .btn-subscribe:hover { opacity: 0.9; transform: translateY(-2px); }
+
+  .paywall-note { font-size: 0.75rem; color: var(--muted); }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  @keyframes typingBounce {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(-5px); opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-grid"></div>
+<div class="bg-glow glow-1"></div>
+<div class="bg-glow glow-2"></div>
+
+<!-- ===== LANDING ===== -->
+<div id="screen-landing" class="screen active">
+  <div class="landing-content">
+    <div class="badge"><span class="badge-dot"></span> IA conversacional · En tiempo real</div>
+    <h1>Habla inglés<br>en tu <span class="highlight">trabajo</span><br>desde hoy</h1>
+    <p class="subtitle">
+      No más vocabulario sin contexto. Practica <strong>conversaciones reales de trabajo</strong> —reuniones, emails, entrevistas— con una IA que te corrige y adapta a tu forma de aprender.
+    </p>
+    <div class="cta-group">
+      <button class="btn-primary" onclick="showScreen('onboarding')">Empezar gratis →</button>
+      <button class="btn-ghost" onclick="showScreen('app')">Ver demo</button>
+    </div>
+    <div class="social-proof">
+      <div class="avatars">
+        <div class="avatar" style="background:#2d4a3e;color:#4fffb0">M</div>
+        <div class="avatar" style="background:#2d2a4a;color:#7b6fff">C</div>
+        <div class="avatar" style="background:#4a2d3a;color:#ff6fb0">A</div>
+        <div class="avatar" style="background:#3a4a2d;color:#b0ff6f">R</div>
+      </div>
+      <span>+200 profesionales ya practican esta semana</span>
+    </div>
+    <div class="features-strip">
+      <div class="feature-item"><div class="feature-icon">🎯</div> Adaptado a tu perfil</div>
+      <div class="feature-item"><div class="feature-icon">🤖</div> IA con feedback real</div>
+      <div class="feature-item"><div class="feature-icon">💼</div> Inglés de trabajo</div>
+      <div class="feature-item"><div class="feature-icon">⚡</div> Sin apps que instalar</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ONBOARDING ===== -->
+<div id="screen-onboarding" class="screen">
+  <div class="bg-glow glow-1"></div>
+  <div class="bg-glow glow-2"></div>
+  <div class="onboarding-card">
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot-0"></div>
+      <div class="step-dot" id="dot-1"></div>
+      <div class="step-dot" id="dot-2"></div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step active" id="step-0">
+      <div class="step-label">Paso 1 de 3</div>
+      <div class="step-title">¿Cómo aprendes mejor?</div>
+      <p class="step-desc">Tu cerebro tiene un estilo favorito. Esto nos ayuda a personalizar tu experiencia desde el día 1.</p>
+      <div class="options-grid">
+        <div class="option-card" onclick="selectOption(this, 'learning', 'visual')">
+          <span class="option-emoji">👁️</span>
+          <div class="option-title">Visual</div>
+          <div class="option-desc">Prefiero ver ejemplos y situaciones claras</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'learning', 'auditivo')">
+          <span class="option-emoji">🎧</span>
+          <div class="option-title">Auditivo</div>
+          <div class="option-desc">Aprendo mejor escuchando y repitiendo</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'learning', 'lectura')">
+          <span class="option-emoji">📖</span>
+          <div class="option-title">Lectura</div>
+          <div class="option-desc">Me va bien leyendo y escribiendo</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'learning', 'mixto')">
+          <span class="option-emoji">🔀</span>
+          <div class="option-title">Mixto</div>
+          <div class="option-desc">Depende del día y el tema</div>
+        </div>
+      </div>
+      <button class="btn-next" id="btn-step-0" disabled onclick="nextStep(1)">Continuar →</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step" id="step-1">
+      <div class="step-label">Paso 2 de 3</div>
+      <div class="step-title">¿Cuál es tu nivel actual?</div>
+      <p class="step-desc">Sé honesto — no hay respuesta incorrecta. Esto personaliza la dificultad de tus conversaciones.</p>
+      <div class="options-grid">
+        <div class="option-card" onclick="selectOption(this, 'level', 'básico')">
+          <span class="option-emoji">🌱</span>
+          <div class="option-title">Básico</div>
+          <div class="option-desc">Entiendo poco, me cuesta expresarme</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'level', 'intermedio')">
+          <span class="option-emoji">📈</span>
+          <div class="option-title">Intermedio</div>
+          <div class="option-desc">Me defiendo pero cometo errores</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'level', 'avanzado')">
+          <span class="option-emoji">🚀</span>
+          <div class="option-title">Avanzado</div>
+          <div class="option-desc">Leo bien pero me falta fluidez al hablar</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'level', 'fluido')">
+          <span class="option-emoji">💬</span>
+          <div class="option-title">Casi fluido</div>
+          <div class="option-desc">Quiero pulir el vocabulario profesional</div>
+        </div>
+      </div>
+      <button class="btn-next" id="btn-step-1" disabled onclick="nextStep(2)">Continuar →</button>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step" id="step-2">
+      <div class="step-label">Paso 3 de 3</div>
+      <div class="step-title">¿Para qué necesitas el inglés?</div>
+      <p class="step-desc">Esto define los escenarios con los que practicarás. Elige el más urgente para ti.</p>
+      <div class="options-grid">
+        <div class="option-card" onclick="selectOption(this, 'goal', 'reuniones')">
+          <span class="option-emoji">🤝</span>
+          <div class="option-title">Reuniones</div>
+          <div class="option-desc">Hablar con clientes o equipo internacional</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'goal', 'entrevistas')">
+          <span class="option-emoji">💼</span>
+          <div class="option-title">Entrevistas</div>
+          <div class="option-desc">Conseguir trabajo o ascenso</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'goal', 'presentaciones')">
+          <span class="option-emoji">📊</span>
+          <div class="option-title">Presentaciones</div>
+          <div class="option-desc">Exponer proyectos o reportes</div>
+        </div>
+        <div class="option-card" onclick="selectOption(this, 'goal', 'emails')">
+          <span class="option-emoji">✉️</span>
+          <div class="option-title">Emails</div>
+          <div class="option-desc">Escribir con confianza y profesionalismo</div>
+        </div>
+      </div>
+      <button class="btn-next" id="btn-step-2" disabled onclick="startApp()">Comenzar mi práctica →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="screen-app" class="screen" style="flex-direction:column;">
+  <div class="app-header">
+    <div class="app-logo">FluentAI</div>
+    <select class="scenario-select" id="scenario-select" onchange="changeScenario()">
+      <option value="meeting">💼 Reunión con tu jefe americano</option>
+      <option value="interview">🎯 Entrevista de trabajo</option>
+      <option value="presentation">📊 Presentar un reporte</option>
+      <option value="email">✉️ Redactar email profesional</option>
+    </select>
+    <div class="credits-badge" id="credits-display">3 gratis restantes</div>
+  </div>
+
+  <div class="chat-area" id="chat-area">
+    <div class="scenario-banner" id="scenario-banner">
+      <strong>🎭 Escenario: Reunión semanal de equipo</strong>
+      Tu jefe americano (Mike, Director de Producto) empieza la reunión. Responde naturalmente en inglés. La IA te corregirá y dará tips en tiempo real.
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-row">
+      <textarea id="msg-input" rows="1" placeholder="Escribe tu respuesta en inglés..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+      <button class="send-btn" id="send-btn" onclick="sendMessage()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+    <div class="input-hint">Escribe en inglés · La IA responde como tu colega y corrige tus errores</div>
+  </div>
+</div>
+
+<!-- PAYWALL -->
+<div class="paywall-overlay" id="paywall">
+  <div class="paywall-card">
+    <span class="paywall-icon">🔥</span>
+    <div class="paywall-title">Ya estás progresando</div>
+    <p class="paywall-desc">Has usado tus 3 conversaciones gratuitas. Para seguir practicando sin límites, activa tu plan.</p>
+    <div class="price-block">
+      <div class="price-amount">$12</div>
+      <div class="price-period">por mes · cancela cuando quieras</div>
+      <ul class="price-features">
+        <li>Conversaciones ilimitadas con IA</li>
+        <li>Feedback y corrección en tiempo real</li>
+        <li>4 escenarios profesionales</li>
+        <li>Historial y seguimiento de progreso</li>
+        <li>Personalizado a tu estilo de aprendizaje</li>
+      </ul>
+    </div>
+    <button class="btn-subscribe" onclick="alert('Aquí integrarías Stripe Checkout 💳')">Activar plan — $12/mes</button>
+    <div class="paywall-note">Pago seguro con Stripe · Sin compromisos</div>
+  </div>
+</div>
+
+<script>
+  const userProfile = { learning: null, level: null, goal: null };
+  let freeCredits = 3;
+  let isWaiting = false;
+  let conversationHistory = [];
+
+  const scenarios = {
+    meeting: {
+      label: '💼 Reunión con tu jefe americano',
+      banner: '<strong>🎭 Escenario: Reunión semanal de equipo</strong> Tu jefe americano (Mike, Director de Producto) empieza la reunión. Responde naturalmente en inglés. La IA te corregirá y dará tips en tiempo real.',
+      systemPrompt: `You are Mike, an American Product Director running a weekly team meeting. You're professional, friendly, and direct. 
+
+Your dual role:
+1. ROLEPLAY: Engage naturally as Mike in the meeting conversation
+2. COACH: After each user message, provide brief feedback
+
+Response format (ALWAYS use this exact structure):
+MIKE: [Your response as Mike, 1-3 sentences, natural workplace English]
+---FEEDBACK---
+CORRECTION: [If there's a grammar/vocabulary error, explain it simply in Spanish. If no errors, write "✓ Sin errores graves"]
+TIP: [One practical tip in Spanish about professional English for this context]`
+    },
+    interview: {
+      label: '🎯 Entrevista de trabajo',
+      banner: '<strong>🎭 Escenario: Entrevista en empresa americana</strong> Sarah, HR Manager de una empresa tech, te está entrevistando para un puesto. Responde con confianza en inglés.',
+      systemPrompt: `You are Sarah, an HR Manager at a US tech company conducting a job interview. Be professional but friendly.
+
+Response format (ALWAYS use this exact structure):
+SARAH: [Your question or response as Sarah, 1-3 sentences]
+---FEEDBACK---
+CORRECTION: [Grammar/vocabulary feedback in Spanish. If no errors: "✓ Sin errores graves"]
+TIP: [Interview tip or better phrasing suggestion in Spanish]`
+    },
+    presentation: {
+      label: '📊 Presentar un reporte',
+      banner: '<strong>🎭 Escenario: Presentación de resultados Q3</strong> Estás presentando resultados trimestrales a tu equipo internacional. Tom, el CFO americano, hace preguntas.',
+      systemPrompt: `You are Tom, an American CFO listening to a quarterly results presentation. Ask relevant follow-up questions.
+
+Response format (ALWAYS use this exact structure):
+TOM: [Your question or comment as Tom, 1-3 sentences]
+---FEEDBACK---
+CORRECTION: [Feedback in Spanish. If no errors: "✓ Sin errores graves"]
+TIP: [Presentation language tip in Spanish]`
+    },
+    email: {
+      label: '✉️ Redactar email profesional',
+      banner: '<strong>🎭 Escenario: Email a cliente americano</strong> Necesitas escribir un email a un cliente. Escribe el borrador y tu coach de IA lo revisará y mejorará.',
+      systemPrompt: `You are a professional English writing coach. The user is practicing writing professional emails in English.
+
+Response format (ALWAYS use this exact structure):
+COACH: [Brief acknowledgment and improved version of their email, or if it's good, say so]
+---FEEDBACK---
+CORRECTION: [Specific grammar/style corrections in Spanish. If no errors: "✓ Muy bien escrito"]
+TIP: [One email writing tip in Spanish for professional context]`
+    }
+  };
+
+  let currentScenario = 'meeting';
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + id).classList.add('active');
+    if (id === 'app') initChat();
+  }
+
+  function selectOption(el, type, value) {
+    const grid = el.closest('.options-grid');
+    grid.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    userProfile[type] = value;
+    const stepIndex = { learning: 0, level: 1, goal: 2 }[type];
+    document.getElementById('btn-step-' + stepIndex).disabled = false;
+  }
+
+  function nextStep(stepNum) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step-' + stepNum).classList.add('active');
+    for (let i = 0; i < 3; i++) {
+      const dot = document.getElementById('dot-' + i);
+      dot.classList.remove('active', 'done');
+      if (i < stepNum) dot.classList.add('done');
+      else if (i === stepNum) dot.classList.add('active');
+    }
+  }
+
+  function startApp() {
+    showScreen('app');
+  }
+
+  function initChat() {
+    const chatArea = document.getElementById('chat-area');
+    conversationHistory = [];
+    chatArea.innerHTML = '';
+    updateScenarioBanner();
+    addAIMessage(getOpeningMessage());
+    updateCreditsDisplay();
+  }
+
+  function getOpeningMessage() {
+    const openings = {
+      meeting: "Good morning everyone! Let's get started. [To you] Hey, glad you could join us today. Can you give us a quick update on your projects this week?",
+      interview: "Hi! Thanks so much for coming in today. I'm Sarah from HR. Let's start simple — can you tell me a little about yourself and why you're interested in this role?",
+      presentation: "Alright, go ahead and start your presentation. We're all here to listen.",
+      email: "Welcome! I'm your email coach. Write me the email you need to send and I'll help you make it professional and natural. What's the email about?"
+    };
+    return openings[currentScenario];
+  }
+
+  function updateScenarioBanner() {
+    document.getElementById('scenario-banner').innerHTML = scenarios[currentScenario].banner;
+    const select = document.getElementById('scenario-select');
+    select.value = currentScenario;
+  }
+
+  function changeScenario() {
+    currentScenario = document.getElementById('scenario-select').value;
+    initChat();
+  }
+
+  function addMessage(role, text, feedback, tip) {
+    const chatArea = document.getElementById('chat-area');
+    const div = document.createElement('div');
+    div.className = `message ${role}`;
+
+    const avatarDiv = document.createElement('div');
+    avatarDiv.className = `msg-avatar ${role === 'ai' ? 'ai-av' : 'user-av'}`;
+    avatarDiv.textContent = role === 'ai' ? '🤖' : '👤';
+
+    const contentDiv = document.createElement('div');
+    contentDiv.className = 'msg-content';
+
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble';
+    bubble.textContent = text;
+    contentDiv.appendChild(bubble);
+
+    if (feedback) {
+      const fb = document.createElement('div');
+      fb.className = 'msg-feedback';
+      fb.innerHTML = `<span class="feedback-label">✏️ Corrección</span>${feedback}`;
+      contentDiv.appendChild(fb);
+    }
+
+    if (tip) {
+      const tp = document.createElement('div');
+      tp.className = 'msg-tip';
+      tp.innerHTML = `<span class="tip-label">💡 Tip profesional</span>${tip}`;
+      contentDiv.appendChild(tp);
+    }
+
+    div.appendChild(avatarDiv);
+    div.appendChild(contentDiv);
+    chatArea.appendChild(div);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  function addAIMessage(text, feedback, tip) {
+    addMessage('ai', text, feedback, tip);
+  }
+
+  function addUserMessage(text) {
+    addMessage('user', text);
+  }
+
+  function showTyping() {
+    const chatArea = document.getElementById('chat-area');
+    const div = document.createElement('div');
+    div.className = 'message ai';
+    div.id = 'typing-msg';
+    div.innerHTML = `
+      <div class="msg-avatar ai-av">🤖</div>
+      <div class="msg-content">
+        <div class="typing-indicator">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>`;
+    chatArea.appendChild(div);
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }
+
+  function hideTyping() {
+    const t = document.getElementById('typing-msg');
+    if (t) t.remove();
+  }
+
+  function updateCreditsDisplay() {
+    const el = document.getElementById('credits-display');
+    if (freeCredits > 0) {
+      el.textContent = `${freeCredits} gratis restantes`;
+      el.style.color = 'var(--accent)';
+    } else {
+      el.textContent = 'Plan Pro activo';
+      el.style.color = 'var(--accent2)';
+    }
+  }
+
+  async function sendMessage() {
+    if (isWaiting) return;
+    const input = document.getElementById('msg-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    if (freeCredits <= 0) {
+      document.getElementById('paywall').classList.add('show');
+      return;
+    }
+
+    freeCredits--;
+    updateCreditsDisplay();
+
+    input.value = '';
+    input.style.height = 'auto';
+    addUserMessage(text);
+    isWaiting = true;
+    document.getElementById('send-btn').disabled = true;
+    showTyping();
+
+    conversationHistory.push({ role: 'user', content: text });
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-api-key': window.ANTHROPIC_KEY || '',
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: scenarios[currentScenario].systemPrompt,
+          messages: conversationHistory
+        })
+      });
+
+      const data = await response.json();
+      hideTyping();
+
+      const fullText = data.content.map(c => c.text || '').join('');
+      const parts = fullText.split('---FEEDBACK---');
+      const mainText = parts[0].replace(/^(MIKE|SARAH|TOM|COACH):\s*/i, '').trim();
+
+      let correction = null, tip = null;
+      if (parts[1]) {
+        const feedbackPart = parts[1];
+        const corrMatch = feedbackPart.match(/CORRECTION:\s*(.+?)(?=TIP:|$)/s);
+        const tipMatch = feedbackPart.match(/TIP:\s*(.+?)$/s);
+        if (corrMatch) correction = corrMatch[1].trim();
+        if (tipMatch) tip = tipMatch[1].trim();
+      }
+
+      conversationHistory.push({ role: 'assistant', content: fullText });
+      addAIMessage(mainText, correction, tip);
+
+    } catch (err) {
+      hideTyping();
+      addAIMessage("Sorry, there was a connection error. Please try again.");
+    }
+
+    isWaiting = false;
+    document.getElementById('send-btn').disabled = false;
+
+    if (freeCredits === 0) {
+      setTimeout(() => document.getElementById('paywall').classList.add('show'), 1500);
+    }
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+</script>
+</body>
+</html>
